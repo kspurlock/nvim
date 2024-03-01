@@ -105,5 +105,6 @@ vim.opt.splitright = true
 require("telescope_settings")
 require("cmp_settings")
 require("lsp_settings")
+require("iron_settings")
 
 -- vim: ts=2 sts=2 sw=2 et
