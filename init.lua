@@ -102,6 +102,7 @@ vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]])
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 
+
 require("telescope_settings")
 require("cmp_settings")
 require("lsp_settings")
