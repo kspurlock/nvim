@@ -37,6 +37,8 @@ dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_l
 
 "Vigemus/iron.nvim",
 "nvim-treesitter/nvim-treesitter",
+
+{'dccsillag/magma-nvim', build = { ':UpdateRemotePlugins' }, dev = true},
 }
 , {})
 
@@ -48,7 +50,8 @@ require("telekasten").setup({
 vim.o.hlsearch = false
 
 --Make line numbers default
-vim.wo.number = true
+--vim.wo.number = true
+vim.wo.relativenumber = true
 
 --Enable mouse mode
 vim.o.mouse = "a"
@@ -103,6 +106,7 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 
 
+vim.keymap.set("n", "<LocalLeader>rip", ":MagmaEvaluateLine<CR>", {silent = true})
 require("telescope_settings")
 require("cmp_settings")
 require("lsp_settings")

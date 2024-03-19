@@ -24,7 +24,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 -- Enable the following language servers
-local servers = { "pyright", "gopls", "lua-language-server"}
+local servers = { "pyright", "gopls"}
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     on_attach = on_attach,
@@ -32,14 +32,14 @@ for _, lsp in ipairs(servers) do
   }
 end
 
+
 lspconfig.lua_ls.setup {
   on_attach = on_attach,
   capabilities = capabilities,
   settings = {
     Lua = {
-      completion = {
-        callSnippet = 'Replace',
-      },
+	    completion = { callSnippet = 'Replace',},
+	    diagnostics = { globals = {"vim"} },
     },
   },
 }
