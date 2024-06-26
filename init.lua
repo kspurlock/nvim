@@ -50,8 +50,14 @@ require("telekasten").setup({
 vim.o.hlsearch = false
 
 --Make line numbers default
---vim.wo.number = true
+vim.wo.number = true
 vim.wo.relativenumber = true
+
+-- Auto command to remove line numbers on terminal
+vim.api.nvim_create_autocmd({"TermOpen"}, {
+pattern = {"*"},
+command = "setlocal nonumber | setlocal norelativenumber"
+})
 
 --Enable mouse mode
 vim.o.mouse = "a"
