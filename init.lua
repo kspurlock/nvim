@@ -101,7 +101,7 @@ vim.opt.splitright = true
 
 vim.keymap.set("n", "<LocalLeader>rip", ":MagmaEvaluateLine<CR>", {silent = true})
 require("telescope_settings")
-require("new_cmp_settings")
+require("cmp_settings")
 require("lsp_settings")
 require("iron_settings")
 
