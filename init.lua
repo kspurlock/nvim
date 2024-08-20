@@ -7,30 +7,44 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Add plugins
 require("lazy").setup({
-"tpope/vim-fugitive", -- Git commands in nvim
-"tpope/vim-rhubarb", -- Fugitive-companion to interact with github
-"numToStr/Comment.nvim", -- "gc" to comment visual regions/lines:
+"tpope/vim-fugitive", --Git commands in nvim
+"tpope/vim-rhubarb", --Fugitive-companion to interact with github
 "cpea2506/one_monokai.nvim",
 "nvim-lualine/lualine.nvim", --Statusline
--- Add indentation guides even on blank lines
-"lukas-reineke/indent-blankline.nvim",
-"williamboman/mason.nvim", -- Automatically install LSPs to stdpath for neovim
-"williamboman/mason-lspconfig.nvim", -- ibid
+"lukas-reineke/indent-blankline.nvim", --Add indentation guides even on blank lines
+"williamboman/mason.nvim", --Automatically install LSPs to stdpath for neovim
+"williamboman/mason-lspconfig.nvim",
 "neovim/nvim-lspconfig", -- Collection of configurations for built-in LSP client
 "folke/neodev.nvim", -- Lua language server configuration for nvim
+{"L3MON4D3/LuaSnip", dependencies = { "rafamadriz/friendly-snippets" }},
 { "hrsh7th/nvim-cmp", dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },}, -- Autocompletion
 { "nvim-telescope/telescope.nvim", version = "*", dependencies = { "nvim-lua/plenary.nvim" } },
 {"nvim-telescope/telescope-fzf-native.nvim"},
 {"nvim-telescope/telescope-file-browser.nvim", dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }},
-{ "renerocksai/telekasten.nvim", dependencies = {"nvim-telescope/telescope.nvim"}},
-"Vigemus/iron.nvim",
+--"Vigemus/iron.nvim",
 "nvim-treesitter/nvim-treesitter",
 {'dccsillag/magma-nvim', build = { ':UpdateRemotePlugins' }, dev = true},
+--{'dstein64/vim-startuptime', }
 }, {})
 
-require("telekasten").setup({
-  home = vim.fn.expand("~/zettelkasten"), -- Put the name of your notes directory here
-})
+------------------------------------------------------------
+--Setups
+------------------------------------------------------------
+
+require("luasnip.loaders.from_vscode").lazy_load()
+
+--Set statusbar
+require("lualine").setup {
+  options = {
+    icons_enabled = false,
+    theme = "one_monokai",
+    component_separators = "|",
+    section_separators = "",
+  },}
+
+------------------------------------------------------------
+--Basic Settings
+------------------------------------------------------------
 
 --Set highlight on search
 vim.o.hlsearch = true
@@ -64,45 +78,43 @@ vim.wo.signcolumn = "yes"
 -- Decrease update time
 vim.o.updatetime = 250
 
--- Set completeopt to have a better completion experience
----vim.o.completeopt = "menuone,noselect"
+-- Split behavior
+vim.opt.splitbelow = true
+vim.opt.splitright = true
 
 --Set colorscheme (order is important here)
 vim.o.termguicolors = true
 vim.cmd.colorscheme "one_monokai"
 
+--vim.o.completeopt = 'menuone,noselect'
 
---Set statusbar
-require("lualine").setup {
-  options = {
-    icons_enabled = false,
-    theme = "one_monokai",
-    component_separators = "|",
-    section_separators = "",
-  },
-}
+--Clipboard
+vim.api.nvim_set_option("clipboard","unnamed")
+
+------------------------------------------------------------
+---Keybinds
+------------------------------------------------------------
 
 --Remap space as leader key
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
-vim.api.nvim_set_option("clipboard","unnamed")
-
---Other vim remaps
 --Exit termnal with Esc
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]])
 
+--Magma
+vim.keymap.set("n", "<LocalLeader>rr", ":MagmaEvaluateLine<CR>", {silent = true})
+vim.keymap.set("x", "<LocalLeader>r", ":<C-u>MagmaEvaluateVisual<CR>")
+vim.keymap.set("n", "<LocalLeader>rc", ":<C-u>MagmaEvaluateCell<CR>")
 
---Set split behavior
-vim.opt.splitbelow = true
-vim.opt.splitright = true
 
-
-vim.keymap.set("n", "<LocalLeader>rip", ":MagmaEvaluateLine<CR>", {silent = true})
+------------------------------------------------------------
+---Other settings
+------------------------------------------------------------
 require("telescope_settings")
 require("cmp_settings")
 require("lsp_settings")
-require("iron_settings")
+--require("iron_settings")
 
 -- vim: ts=2 sts=2 sw=2 et
