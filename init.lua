@@ -7,31 +7,34 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Add plugins
 require("lazy").setup({
-"tpope/vim-fugitive", --Git commands in nvim
-"tpope/vim-rhubarb", --Fugitive-companion to interact with github
-"cpea2506/one_monokai.nvim",
-"nvim-lualine/lualine.nvim", --Statusline
-"lukas-reineke/indent-blankline.nvim", --Add indentation guides even on blank lines
-"williamboman/mason.nvim", --Automatically install LSPs to stdpath for neovim
-"williamboman/mason-lspconfig.nvim",
-"neovim/nvim-lspconfig", -- Collection of configurations for built-in LSP client
-"folke/neodev.nvim", -- Lua language server configuration for nvim
-{"L3MON4D3/LuaSnip", dependencies = { "rafamadriz/friendly-snippets" }},
-{ "hrsh7th/nvim-cmp", dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },}, -- Autocompletion
-{ "nvim-telescope/telescope.nvim", version = "*", dependencies = { "nvim-lua/plenary.nvim" } },
-{"nvim-telescope/telescope-fzf-native.nvim"},
-{"nvim-telescope/telescope-file-browser.nvim", dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }},
---"Vigemus/iron.nvim",
-"nvim-treesitter/nvim-treesitter",
-{'dccsillag/magma-nvim', build = { ':UpdateRemotePlugins' }, dev = true},
---{'dstein64/vim-startuptime', }
-}, {})
+  "tpope/vim-fugitive", --Git commands in nvim
+  "tpope/vim-rhubarb", --Fugitive-companion to interact with github
+  "cpea2506/one_monokai.nvim",
+  "nvim-lualine/lualine.nvim", --Statusline
+  "lukas-reineke/indent-blankline.nvim", --Add indentation guides even on blank lines
+  "williamboman/mason.nvim", --Automatically install LSPs to stdpath for neovim
+  "williamboman/mason-lspconfig.nvim",
+  "neovim/nvim-lspconfig", -- Collection of configurations for built-in LSP client
+  "folke/neodev.nvim", -- Lua language server configuration for nvim
+  {"L3MON4D3/LuaSnip", dependencies = { "rafamadriz/friendly-snippets" }},
+  { "hrsh7th/nvim-cmp", dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },}, -- Autocompletion
+  { "nvim-telescope/telescope.nvim", version = "*", dependencies = { "nvim-lua/plenary.nvim" } },
+  {"nvim-telescope/telescope-fzf-native.nvim"},
+  {"nvim-telescope/telescope-file-browser.nvim", dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }},
+  --"Vigemus/iron.nvim",
+  "nvim-treesitter/nvim-treesitter",
+  {'dccsillag/magma-nvim', build = { ':UpdateRemotePlugins' }, dev = true},
+  {"lukas-reineke/indent-blankline.nvim", main = "ibl"},
+},
+{})
 
 ------------------------------------------------------------
 --Setups
 ------------------------------------------------------------
 
 require("luasnip.loaders.from_vscode").lazy_load()
+
+require("ibl").setup()
 
 --Set statusbar
 require("lualine").setup {
