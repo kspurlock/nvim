@@ -1,49 +1,168 @@
 -- Install package manager
-local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system { "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath }
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable",
+		lazypath,
+	})
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- Add plugins
 require("lazy").setup({
-  "tpope/vim-fugitive", --Git commands in nvim
-  "tpope/vim-rhubarb", --Fugitive-companion to interact with github
-  "cpea2506/one_monokai.nvim",
-  "nvim-lualine/lualine.nvim", --Statusline
-  "lukas-reineke/indent-blankline.nvim", --Add indentation guides even on blank lines
-  "williamboman/mason.nvim", --Automatically install LSPs to stdpath for neovim
-  "williamboman/mason-lspconfig.nvim",
-  "neovim/nvim-lspconfig", -- Collection of configurations for built-in LSP client
-  "folke/neodev.nvim", -- Lua language server configuration for nvim
-  {"L3MON4D3/LuaSnip", dependencies = { "rafamadriz/friendly-snippets" }},
-  { "hrsh7th/nvim-cmp", dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },}, -- Autocompletion
-  { "nvim-telescope/telescope.nvim", version = "*", dependencies = { "nvim-lua/plenary.nvim" } },
-  {"nvim-telescope/telescope-fzf-native.nvim"},
-  {"nvim-telescope/telescope-file-browser.nvim", dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }},
-  --"Vigemus/iron.nvim",
-  "nvim-treesitter/nvim-treesitter",
-  {'dccsillag/magma-nvim', build = { ':UpdateRemotePlugins' }, dev = true},
-  {"lukas-reineke/indent-blankline.nvim", main = "ibl"},
-},
-{})
+	"tpope/vim-fugitive", --Git commands in nvim
+	"tpope/vim-rhubarb", --Fugitive-companion to interact with github
+	"cpea2506/one_monokai.nvim",
+	"nvim-lualine/lualine.nvim", --Statusline
+	"lukas-reineke/indent-blankline.nvim", --Add indentation guides even on blank lines
+	"williamboman/mason.nvim", --Automatically install LSPs to stdpath for neovim
+	"williamboman/mason-lspconfig.nvim",
+	"neovim/nvim-lspconfig", -- Collection of configurations for built-in LSP client
+	"folke/neodev.nvim", -- Lua language server configuration for nvim
+	{ "L3MON4D3/LuaSnip", dependencies = { "rafamadriz/friendly-snippets" } },
+	{ "hrsh7th/nvim-cmp", dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" } }, -- Autocompletion
+	{ "nvim-telescope/telescope.nvim", version = "*", dependencies = { "nvim-lua/plenary.nvim" } },
+	{ "nvim-telescope/telescope-fzf-native.nvim" },
+
+	{
+		"nvim-telescope/telescope-file-browser.nvim",
+		dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+	},
+
+	"nvim-treesitter/nvim-treesitter",
+	{ "dccsillag/magma-nvim", build = { ":UpdateRemotePlugins" }, dev = true },
+	{ "lukas-reineke/indent-blankline.nvim", main = "ibl" },
+
+	{ -- Changes command line
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		opts = {},
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
+		},
+	},
+
+	{ "airblade/vim-gitgutter" }, -- Git changes in sign column
+
+	{
+		"yetone/avante.nvim",
+		event = "VeryLazy",
+		lazy = false,
+		version = false, -- set this if you want to always pull the latest change
+		opts = {
+			provider = "ollama",
+			vendors = {
+            ---@type AvanteProvider
+				ollama = {
+					["local"] = true,
+					endpoint = "127.0.0.1:11434/v1",
+					model = "codegemma",
+					parse_curl_args = function(opts, code_opts)
+						return {
+							url = opts.endpoint .. "/chat/completions",
+							headers = {
+								["Accept"] = "application/json",
+								["Content-Type"] = "application/json",
+							},
+							body = {
+								model = opts.model,
+								messages = require("avante.providers").copilot.parse_message(code_opts), -- you can make your own message, but this is very advanced
+								max_tokens = 2048,
+								stream = true,
+							},
+						}
+					end,
+					parse_response_data = function(data_stream, event_state, opts)
+						require("avante.providers").openai.parse_response(data_stream, event_state, opts)
+					end,
+				},
+			},
+		},
+		-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+		build = "make",
+		-- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"stevearc/dressing.nvim",
+			"nvim-lua/plenary.nvim",
+			"MunifTanjim/nui.nvim",
+			--- The below dependencies are optional,
+			"nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+			--"zbirenbaum/copilot.lua", -- for providers='copilot'
+			{
+				-- support for image pasting
+				"HakonHarnes/img-clip.nvim",
+				event = "VeryLazy",
+				opts = {
+					-- recommended settings
+					default = {
+						embed_image_as_base64 = false,
+						prompt_for_file_name = false,
+						drag_and_drop = {
+							insert_mode = true,
+						},
+						use_absolute_path = false, --Required for Windows users
+					},
+				},
+			},
+			{
+				-- Make sure to set this up properly if you have lazy=true
+				"MeanderingProgrammer/render-markdown.nvim",
+				opts = {
+					file_types = { "markdown", "Avante" },
+				},
+				ft = { "markdown", "Avante" },
+			},
+		},
+	},
+}, {})
 
 ------------------------------------------------------------
 --Setups
 ------------------------------------------------------------
 
+
+
 require("luasnip.loaders.from_vscode").lazy_load()
 
 require("ibl").setup()
 
+require("noice").setup({
+	lsp = {
+		-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+		override = {
+			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+			["vim.lsp.util.stylize_markdown"] = false,
+			["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+		},
+	},
+	-- you can enable a preset for easier configuration
+	presets = {
+		bottom_search = true, -- use a classic bottom cmdline for search
+		command_palette = true, -- position the cmdline and popupmenu together
+		long_message_to_split = true, -- long messages will be sent to a split
+		inc_rename = false, -- enables an input dialog for inc-rename.nvim
+		lsp_doc_border = false, -- add a border to hover docs and signature help
+	},
+	messages = {
+		enabled = false,
+	},
+})
+
 --Set statusbar
-require("lualine").setup {
-  options = {
-    icons_enabled = false,
-    theme = "one_monokai",
-    component_separators = "|",
-    section_separators = "",
-  },}
+require("lualine").setup({
+	options = {
+		icons_enabled = false,
+		theme = "one_monokai",
+		component_separators = "|",
+		section_separators = "",
+	},
+})
 
 ------------------------------------------------------------
 --Basic Settings
@@ -53,13 +172,13 @@ require("lualine").setup {
 vim.o.hlsearch = true
 
 --Make line numbers default
-vim.wo.number = true
-vim.wo.relativenumber = true
+vim.o.number = true
+vim.o.relativenumber = true
 
--- Auto command to remove line numbers on terminal
-vim.api.nvim_create_autocmd({"TermOpen"}, {
-pattern = {"*"},
-command = "setlocal nonumber | setlocal norelativenumber"
+--Auto command to remove line numbers on terminal
+vim.api.nvim_create_autocmd({ "TermOpen" }, {
+	pattern = { "*" },
+	command = "setlocal nonumber | setlocal norelativenumber",
 })
 
 --Enable mouse mode
@@ -69,30 +188,34 @@ vim.o.mouse = "a"
 vim.o.breakindent = true
 
 --Save undo history
-vim.opt.undofile = true
+vim.o.undofile = true
 
 --Case insensitive searching UNLESS /C or capital in search
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
-vim.wo.signcolumn = "yes"
+vim.o.signcolumn = "yes"
 
 -- Decrease update time
 vim.o.updatetime = 250
 
 -- Split behavior
-vim.opt.splitbelow = true
-vim.opt.splitright = true
+vim.o.splitbelow = true
+vim.o.splitright = true
 
 --Set colorscheme (order is important here)
 vim.o.termguicolors = true
-vim.cmd.colorscheme "one_monokai"
+vim.cmd.colorscheme("one_monokai")
 
 --vim.o.completeopt = 'menuone,noselect'
 
 --Clipboard
-vim.api.nvim_set_option("clipboard","unnamed")
+vim.api.nvim_set_option("clipboard", "unnamed")
+
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.expandtab = true
 
 ------------------------------------------------------------
 ---Keybinds
@@ -106,11 +229,24 @@ vim.g.maplocalleader = " "
 --Exit termnal with Esc
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]])
 
+--Run file
+vim.keymap.set("n", "<leader>5", function()
+	local filetype = vim.bo.filetype
+	print(type(filetype))
+
+	if filetype == "python" then
+		vim.cmd("!python3 %")
+	else
+		error("Can't run this file.")
+	end
+end)
+
+vim.api.nvim_create_user_command("EditInit", "e ~/.config/nvim/init.lua", {})
+
 --Magma
-vim.keymap.set("n", "<LocalLeader>rr", ":MagmaEvaluateLine<CR>", {silent = true})
+vim.keymap.set("n", "<LocalLeader>rr", ":MagmaEvaluateLine<CR>", { silent = true })
 vim.keymap.set("x", "<LocalLeader>r", ":<C-u>MagmaEvaluateVisual<CR>")
 vim.keymap.set("n", "<LocalLeader>rc", ":<C-u>MagmaEvaluateCell<CR>")
-
 
 ------------------------------------------------------------
 ---Other settings
@@ -119,5 +255,3 @@ require("telescope_settings")
 require("cmp_settings")
 require("lsp_settings")
 --require("iron_settings")
-
--- vim: ts=2 sts=2 sw=2 et
