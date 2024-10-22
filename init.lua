@@ -19,15 +19,26 @@ require("lazy").setup({
 		"tpope/vim-fugitive", --Git commands in nvim
 		"tpope/vim-rhubarb", --Fugitive-companion to interact with github
 		"cpea2506/one_monokai.nvim",
+		--{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 		"nvim-lualine/lualine.nvim", --Statusline
-		"lukas-reineke/indent-blankline.nvim", --Add indentation guides even on blank lines
 		"williamboman/mason.nvim", --Automatically install LSPs to stdpath for neovim
 		"williamboman/mason-lspconfig.nvim",
 		"neovim/nvim-lspconfig", -- Collection of configurations for built-in LSP client
 		"folke/neodev.nvim", -- Lua language server configuration for nvim
 		"sindrets/diffview.nvim",
 
-		{ "L3MON4D3/LuaSnip", dependencies = { "rafamadriz/friendly-snippets" } },
+		{
+			"cbochs/grapple.nvim",
+			dependencies = {
+				{ "nvim-tree/nvim-web-devicons", lazy = true },
+			},
+		},
+
+		{
+			"L3MON4D3/LuaSnip",
+			dependencies = { "rafamadriz/friendly-snippets" },
+		},
+
 		{
 			"hrsh7th/nvim-cmp",
 			dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },
@@ -43,16 +54,33 @@ require("lazy").setup({
 		"nvim-treesitter/nvim-treesitter",
 		--{ "dccsillag/magma-nvim", build = { ":UpdateRemotePlugins" }, dev=true},
 		{
-			"benlubas/molten-nvim",
-			version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
-			build = ":UpdateRemotePlugins",
-			init = function()
-				-- this is an example, not a default. Please see the readme for more configuration options
-				vim.g.molten_output_win_max_height = 12
-			end,
+			{
+				"benlubas/molten-nvim",
+				version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
+				dependencies = { "3rd/image.nvim" },
+				build = ":UpdateRemotePlugins",
+				init = function()
+					-- these are examples, not defaults. Please see the readme
+					vim.g.molten_image_provider = "image.nvim"
+					vim.g.molten_output_win_max_height = 20
+				end,
+			},
+			{
+				-- see the image.nvim readme for more information about configuring this plugin
+				"3rd/image.nvim",
+				opts = {
+					backend = "kitty", -- whatever backend you would like to use
+					max_width = 100,
+					max_height = 12,
+					max_height_window_percentage = math.huge,
+					max_width_window_percentage = math.huge,
+					window_overlap_clear_enabled = true, -- toggles images when windows are overlapped
+					window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
+				},
+			},
 		},
 
-		--{ "lukas-reineke/indent-blankline.nvim", main = "ibl" },
+		{ "lukas-reineke/indent-blankline.nvim", main = "ibl" },
 
 		{
 			"folke/noice.nvim",
@@ -144,6 +172,12 @@ require("lazy").setup({
 ------------------------------------------------------------
 --Setups
 ------------------------------------------------------------
+
+--Remap space as leader key
+vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 require("luasnip.loaders.from_vscode").lazy_load()
 
 require("ibl").setup()
@@ -179,7 +213,7 @@ require("noice").setup({
 		bottom_search = true, -- use a classic bottom cmdline for search
 		command_palette = true, -- position the cmdline and popupmenu together
 		long_message_to_split = true, -- long messages will be sent to a split
-		inc_rename = false, -- enables an input dialog for inc-rename.nvim
+		inc_rename = true, -- enables an input dialog for inc-rename.nvim
 		lsp_doc_border = false, -- add a border to hover docs and signature help
 	},
 	messages = {
@@ -195,7 +229,32 @@ require("lualine").setup({
 		component_separators = "|",
 		section_separators = "",
 	},
+	sections = {
+		lualine_x = {
+			{
+				require("noice").api.status.message.get_hl,
+				cond = require("noice").api.status.message.has,
+			},
+			{
+				require("noice").api.status.command.get,
+				cond = require("noice").api.status.command.has,
+				color = { fg = "#ff9e64" },
+			},
+			{
+				require("noice").api.status.mode.get,
+				cond = require("noice").api.status.mode.has,
+				color = { fg = "#ff9e64" },
+			},
+			{
+				require("noice").api.status.search.get,
+				cond = require("noice").api.status.search.has,
+				color = { fg = "#ff9e64" },
+			},
+		},
+	},
 })
+
+require("molten.status").initialized()
 
 --For Avante
 vim.o.laststatus = 3
@@ -260,11 +319,6 @@ vim.o.expandtab = true
 ---Keybinds
 ------------------------------------------------------------
 
---Remap space as leader key
-vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
 --Exit termnal with Esc
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]])
 
@@ -300,4 +354,5 @@ vim.keymap.set("n", "<LocalLeader>rc", ":<C-u>MoltenReevaluateCell<CR>")
 require("telescope_settings")
 require("cmp_settings")
 require("lsp_settings")
+require("grapple_settings")
 --require("iron_settings")
