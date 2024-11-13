@@ -6,8 +6,7 @@ require("mason-lspconfig").setup({})
 local lspconfig = require("lspconfig")
 local on_attach = function(_, bufnr)
 	local attach_opts = { silent = true, buffer = bufnr }
-	vim.keymap.set("n", "gD", vim.lsp.buf.declaration, attach_opts)
-	vim.keymap.set("n", "gd", vim.lsp.buf.definition, attach_opts)
+	vim.keymap.set("n", "gd", ":vsplit | lua vim.lsp.buf.definition()<CR>", attach_opts)
 	vim.keymap.set("n", "K", vim.lsp.buf.hover, attach_opts) --TODO: make it so the popup buffer is automatically selected. Also would be nice if it would take up a bigger portion of the screen
 	vim.keymap.set("n", "gi", vim.lsp.buf.implementation, attach_opts)
 	vim.keymap.set("n", "<C-s>", vim.lsp.buf.signature_help, attach_opts)
