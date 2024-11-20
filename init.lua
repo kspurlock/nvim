@@ -20,7 +20,8 @@ require("lazy").setup({
 		"tpope/vim-rhubarb", --Fugitive-companion to interact with github
 		"cpea2506/one_monokai.nvim",
 		--{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
-		"nvim-lualine/lualine.nvim", --Statusline
+        "loctvl842/monokai-pro.nvim",
+        "nvim-lualine/lualine.nvim", --Statusline
 		"williamboman/mason.nvim", --Automatically install LSPs to stdpath for neovim
 		"williamboman/mason-lspconfig.nvim",
 		"neovim/nvim-lspconfig", -- Collection of configurations for built-in LSP client
@@ -178,6 +179,33 @@ vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+require("monokai-pro").setup({
+	transparent_background = false,
+	terminal_colors = true,
+	devicons = true, -- highlight the icons of `nvim-web-devicons`
+	filter = "pro", -- classic | octagon | pro | machine | ristretto | spectrum
+	-- Enable this will disable filter option
+	inc_search = "background", -- underline | background
+	background_clear = {
+		"toggleterm",
+		"telescope",
+		"renamer",
+		"notify",
+	}, -- "float_win", "toggleterm", "telescope", "which-key", "renamer", "neo-tree", "nvim-tree", "bufferline"
+	plugins = {
+		bufferline = {
+			underline_selected = false,
+			underline_visible = false,
+		},
+		indent_blankline = {
+			context_highlight = "pro", -- default | pro
+			context_start_underline = false,
+		},
+	}
+})
+
+vim.cmd.colorscheme("monokai-pro")
+
 require("luasnip.loaders.from_vscode").lazy_load()
 
 require("ibl").setup()
@@ -225,7 +253,7 @@ require("noice").setup({
 require("lualine").setup({
 	options = {
 		icons_enabled = false,
-		theme = "one_monokai",
+		theme = "monokai-pro",
 		component_separators = "|",
 		section_separators = "",
 	},
@@ -303,8 +331,7 @@ vim.o.splitbelow = true
 vim.o.splitright = true
 
 --Set colorscheme (order is important here)
-vim.o.termguicolors = true
-vim.cmd.colorscheme("one_monokai")
+--vim.o.termguicolors = true
 
 --vim.o.completeopt = 'menuone,noselect'
 
