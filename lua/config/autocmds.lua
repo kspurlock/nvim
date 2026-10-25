@@ -13,6 +13,7 @@ vim.api.nvim_create_autocmd("CmdlineChanged", {
 
 -- Don't display line numbers in terminal buffers.
 vim.api.nvim_create_autocmd("TermOpen", {
+  group = vim.api.nvim_create_augroup("UserTerminalOptions", { clear = true }),
   callback = function()
     vim.opt_local.number = false
     vim.opt_local.relativenumber = false

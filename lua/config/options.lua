@@ -16,7 +16,7 @@ vim.o.termguicolors = true
 vim.diagnostic.config({
   virtual_text = { spacing = 2, prefix = "●" },
   virtual_lines = false,
-  signs = true,
+  signs = false,
   underline = true,
   severity_sort = true,
   update_in_insert = false,

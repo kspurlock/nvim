@@ -58,7 +58,10 @@ vim.pack.add({
   { src = "https://github.com/nvim-lualine/lualine.nvim", version = "master" },
   { src = 'https://github.com/nvim-tree/nvim-tree.lua' },
   { src = "https://github.com/nvim-tree/nvim-web-devicons", version = "master" },
-  { src = "https://codeberg.org/andyg/leap.nvim", version = "main"}
+  { src = "https://codeberg.org/andyg/leap.nvim", version = "main"},
+  { src = "https://github.com/lewis6991/async.nvim", version = "main" },
+  { src = "https://github.com/theprimeagen/refactoring.nvim", version = "master" },
+  { src = "https://github.com/github/copilot.vim", version = "release"}
 }, {
   confirm = false,
   -- load=false only postpones plugin scripts until later in startup. A custom
